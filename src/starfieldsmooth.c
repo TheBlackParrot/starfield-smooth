@@ -6,11 +6,11 @@
 
 static Window *window;
 static Layer *canvas;
+static TextLayer *time_layer;
 static AppTimer *timer;
-const ResHandle *f_handle;
 static uint32_t delta = 33;
 static int visible_stars = 0;
-static char* time_text;
+static char time_text[] = "00:00";
 
 struct Star {
 	short x;
@@ -146,13 +146,6 @@ static void render(Layer *layer, GContext* ctx)
 			graphics_fill_rect(ctx, GRect(stars[i]->x, stars[i]->y, stars[i]->radius, stars[i]->radius), 0, GCornerNone);
 		}
 	}
-	
-	//Draw time
-	graphics_context_set_text_color(ctx, GColorWhite);
-	GFont font = fonts_load_custom_font(f_handle);
-	const char* text = time_text;
-	graphics_draw_text(ctx, text, font, GRect(11, 50, 130, 60), GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
-	fonts_unload_custom_font(font);
 }
 
 /****************************** Window Lifecycle *****************************/
@@ -161,12 +154,6 @@ static void set_time_display(struct tm *t)
 {
 	int size = sizeof("00:00");
 
-	//Time string
-	if(time_text == NULL)
-	{
-		time_text = malloc(size);
-	}
-	
 	if(clock_is_24h_style())
 	{
 		strftime(time_text, size, "%H:%M", t);
@@ -176,7 +163,7 @@ static void set_time_display(struct tm *t)
 		strftime(time_text, size, "%I:%M", t);
 	}
 	
-//	text_layer_set_text(colonLayer, hour_text);
+	text_layer_set_text(time_layer, time_text);
 }
 
 static void window_load(Window *window)
@@ -184,13 +171,18 @@ static void window_load(Window *window)
 	//Setup window
 	window_set_background_color(window, GColorBlack);
 	
-	//Get Font
-	f_handle = resource_get_handle(RESOURCE_ID_FONT_IMAGINE_38);
-
 	//Setup canvas
 	canvas = layer_create(GRect(0, 0, 144, 168));
 	layer_set_update_proc(canvas, (LayerUpdateProc) render);
 	layer_add_child(window_get_root_layer(window), canvas);
+	
+	//Setup text layer
+	time_layer = text_layer_create(GRect(0, 60, 144, 50));
+	text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMAGINE_38)));
+	text_layer_set_text_color(time_layer, GColorWhite);
+	text_layer_set_background_color(time_layer, GColorClear);
+	text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
+	layer_add_child(window_get_root_layer(window), text_layer_get_layer(time_layer));
 	
 	//Set initial time so display isn't blank
 	struct tm *t;
@@ -212,6 +204,9 @@ static void window_unload(Window *window)
 	
 	//Destroy canvas
 	layer_destroy(canvas);
+	
+	//Destroy time layer
+	text_layer_destroy(time_layer);
 }
 
 /****************************** App Lifecycle *****************************/
