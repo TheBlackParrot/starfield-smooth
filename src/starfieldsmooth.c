@@ -12,6 +12,8 @@ static uint32_t delta = 33;
 static int visible_stars = 0;
 static char time_text[] = "00:00";
 
+GRect s_bounds;
+
 struct Star {
 	short x;
 	short y;
@@ -77,7 +79,7 @@ static void update()
 			//Spawn one
 			stars[i]->visible = true;
 			stars[i]->x = 0;
-			stars[i]->y = rand() % 168;	//Between 0 and 168
+			stars[i]->y = rand() % s_bounds.size.h;	//Between 0 and s_bounds.size.h
 			stars[i]->radius = rand() % 5;
 			
 			if(stars[i]->radius < 1)
@@ -93,7 +95,7 @@ static void update()
 	for(int i = 0; i < MAX_STARS; i++)
 	{
 		//Evaluate visibility
-		if(stars[i]->x >= 144 + stars[i]->radius)
+		if(stars[i]->x >= s_bounds.size.w + stars[i]->radius)
 		{
 			stars[i]->visible = false;	//Dissapears for recycling
 			visible_stars--;
@@ -168,16 +170,20 @@ static void set_time_display(struct tm *t)
 
 static void window_load(Window *window)
 {
+	s_bounds = layer_get_bounds(window_get_root_layer(window));
+
 	//Setup window
 	window_set_background_color(window, GColorBlack);
 	
 	//Setup canvas
-	canvas = layer_create(GRect(0, 0, 144, 168));
+	canvas = layer_create(GRect(0, 0, s_bounds.size.w, s_bounds.size.h));
 	layer_set_update_proc(canvas, (LayerUpdateProc) render);
 	layer_add_child(window_get_root_layer(window), canvas);
 	
 	//Setup text layer
-	time_layer = text_layer_create(GRect(0, 60, 144, 50));
+	const int font_height = 42;
+	const int margin_y = (s_bounds.size.h - font_height) / 2;
+	time_layer = text_layer_create(grect_inset(s_bounds, GEdgeInsets(margin_y, 0, 0, 0)));
 	text_layer_set_font(time_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_IMAGINE_38)));
 	text_layer_set_text_color(time_layer, GColorWhite);
 	text_layer_set_background_color(time_layer, GColorClear);

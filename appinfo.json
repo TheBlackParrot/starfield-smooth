@@ -3,8 +3,8 @@
   "shortName": "Starfield Smooth",
   "longName": "Starfield Smooth",
   "companyName": "Chris Lewis",
-  "versionCode": 2,
-  "versionLabel": "1.0",
+  "versionCode": 5,
+  "versionLabel": "1.5",
   "watchapp": {
     "watchface": true
   },
@@ -28,7 +28,8 @@
   },
   "targetPlatforms": [
     "aplite",
-    "basalt"
+    "basalt",
+    "chalk"
   ],
   "sdkVersion": "3"
 }
