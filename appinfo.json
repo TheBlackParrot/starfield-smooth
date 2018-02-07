@@ -1,8 +1,8 @@
 {
-  "uuid": "cf45f80c-f3a2-46a5-8ff6-5eb09e63b26e",
-  "shortName": "Starfield Smooth",
-  "longName": "Starfield Smooth",
-  "companyName": "Chris Lewis",
+  "uuid": "2c3ee1ff-b643-4aa9-9743-b9617501c8b3",
+  "shortName": "Starfield Modded",
+  "longName": "Starfield Modded",
+  "companyName": "Chris Lewis/TheBlackParrot",
   "versionCode": 5,
   "versionLabel": "1.5",
   "watchapp": {
@@ -15,8 +15,13 @@
     "media": [
       {
         "type": "font",
-        "name": "FONT_IMAGINE_38",
-        "file": "fonts/imagine.ttf"
+        "name": "FONT_GAMEPLAY_24",
+        "file": "fonts/gameplay.ttf"
+      },
+      {
+        "type": "font",
+        "name": "FONT_AERX_18",
+        "file": "fonts/big_noodle_titling.ttf"
       },
       {
         "menuIcon": true,
@@ -27,9 +32,7 @@
     ]
   },
   "targetPlatforms": [
-    "aplite",
-    "basalt",
-    "chalk"
+    "basalt"
   ],
   "sdkVersion": "3"
 }
